@@ -58,7 +58,7 @@ bindsym $mod+Shift+p exec xrandr --output HDMI-1 --scale 2 --right-of eDP-1 --au
 bindsym $mod+Return exec kitty
 # floating terminal
 for_window [title = "floatkitty"] floating enable
-bindsym $mod+Shift+Return exec kitty --name floatkitty
+bindsym $mod+Shift+Return exec kitty --title floatkitty
 # browser
 bindsym $mod+Ctrl+a exec firefox-developer-edition
 # discord
