@@ -1,0 +1,8 @@
+[user]
+	email = njbrown4@buffalo.edu
+	name = Nick Brown
+	signingkey = 47AF495B3DCCE9C3
+[hub]
+	protocol = ssh
+[commit]
+	gpgsign = true

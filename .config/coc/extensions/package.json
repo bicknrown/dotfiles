@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "coc-clangd": ">=0.15.1",
+    "coc-cmake": ">=0.2.0",
+    "coc-metals": ">=1.0.9",
+    "coc-pyright": ">=1.1.168",
+    "coc-snippets": ">=2.4.6"
+  }
+}
