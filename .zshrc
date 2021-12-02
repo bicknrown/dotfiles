@@ -5,6 +5,15 @@
 alias vim="nvim"
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
+# openvpn home connection
+function homevpn() {
+    if [[ "$1" == "" ]]; then
+        sudo systemctl start openvpn-client@home
+    else
+        sudo systemctl "$1" openvpn-client@home
+    fi
+}
+
 # sets default libvirt connection
 export LIBVIRT_DEFAULT_URI="qemu:///system"
 
