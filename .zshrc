@@ -22,6 +22,9 @@ export CSE220_UBIT="njbrown4"
 # gpg tty setting
 export GPG_TTY=$(tty)
 
+# term setting
+export TERM=xterm-256color
+
 # Enable colors and change prompt:
 autoload -U colors && colors
 PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
