@@ -11,6 +11,8 @@ set mouse=a
 set undofile
 set undodir=~/.config/nvim/undodir
 set splitright
+set spell
+set spelllang=en
 map <F3> :Explore<CR>
 map <C-A-t> :vnew<CR>:term<CR>
 map <C-j> <C-W>j

@@ -22,6 +22,9 @@ export CSE220_UBIT="njbrown4"
 # gpg tty setting
 export GPG_TTY=$(tty)
 
+# term mode
+export TERM=xterm
+
 # docker
 #export DOCKER_HOST=ssh://root@192.168.1.5
 
