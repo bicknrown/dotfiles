@@ -50,7 +50,7 @@ fi
 
 sh ~/.fehbg &
 xrandr --auto 
-xrandr --output DVI-D-0 --primary --pos 0x0 --mode 1920x1080 -r 144.00 --output HDMI-0 --pos 1920x0 --output DP-5 --pos -1920x0 --output DP-1 --pos 0x-1080 &
+xrandr --output DVI-D-0 --primary --mode 1920x1080 -r 144.00 --output HDMI-0 --right-of DVI-D-0 --output DP-5 --left-of DVI-D-0 --output DP-3 --above DVI-D-0 &
 picom -b -c --config ~/.config/picom/picom.conf &
 caffeine &
 udiskie -t &
