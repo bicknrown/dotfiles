@@ -19,10 +19,15 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 filetype plugin on
 call plug#begin()
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'honza/vim-snippets', {'branch': 'master'}
+Plug 'preservim/nerdtree'
 call plug#end()
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? coc#_select_confirm() :

@@ -62,14 +62,6 @@ DIR=/
 interval=30
 color=#2eeeff
 
-[homedisk]
-command=~/.config/i3blocks/scripts/disk
-LABEL=HOME: 
-DIR=/home/
-#ALERT_LOW=10
-interval=30
-color=#2eeeff
-
 [epoch]
 command=date '+%Y-%m-%d %H:%M:%S'
 interval=1

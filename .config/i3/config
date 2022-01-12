@@ -2,6 +2,12 @@
 #
 # https://i3wm.org/docs/userguide.html
 
+# my variables
+set $primary DVI-D-0
+set $secondary DP-5
+set $tertiary HDMI-0
+set $quaternary DP-3
+
 # colors
 # class                 border  backgr. text    indicator child_border
 client.focused          #a80cb3 #c50ed2 #000000 #2e9ef4   #a80cb3
@@ -12,8 +18,11 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 
 client.background       #000000
 
-# bind workspace 1 to primary monitor
-workspace 1 output DVI-D-0
+# bind workspaces to monitors
+workspace 1 output $primary
+workspace 2 output $secondary
+workspace 3 output $tertiary
+workspace 4 output $quaternary
 
 # no more window border
 for_window [class=".*"] border pixel 0
@@ -50,19 +59,23 @@ floating_modifier $mod
 
 # terminal
 bindsym $mod+Return exec kitty
+
 # floating terminal
 for_window [title = "floatkitty"] floating enable
 bindsym $mod+Shift+Return exec kitty --title floatkitty
+
 # browser
 bindsym $mod+Ctrl+a exec firefox-developer-edition
+
 # discord
 bindsym $mod+Ctrl+z exec discord; workspace 2; focus
-# ranger
-bindsym $mod+Ctrl+s exec st -e ranger
+
 # spotify
 bindsym $mod+Ctrl+x exec spotify
+
 # email
-#bindsym $mod+Ctrl+e exec 
+#bindsym $mod+Ctrl+e exec
+
 # screenshots
 bindsym --release shift+Print exec maim ~/Pictures/screenshot_$(date +%Y_%m_%d__%H_%M_%S).png
 bindsym --release Print exec maim -su | tee ~/Pictures/screenshot_$(date +%Y_%m_%d__%H_%M_%S).png | xclip -selection clipboard -t image/png -i 
@@ -213,3 +226,11 @@ bar {
         	inactive_workspace  #300433 #48064d #888888
 	}
 }
+
+# startup programs
+
+exec --no-startup-id picom -b -c --config ~/.config/picom/picom.conf
+exec --no-startup-id udiskie -t
+exec --no-startup-id caffeine
+exec --no-startup-id sh ~/.fehbg
+exec --no-startup-id i3-msg workspace 1
