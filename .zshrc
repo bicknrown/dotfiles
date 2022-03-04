@@ -21,6 +21,9 @@ export LIBVIRT_DEFAULT_URI="qemu:///system"
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
+# the jvm does not like non-reparenting wms, poor sway :(
+export _JAVA_AWT_WM_NONREPARENTING=1
+
 # cedev
 export CEDEV=~/CEdev
 export PATH=$CEDEV/bin:$PATH
@@ -83,9 +86,14 @@ zle -N zle-line-init
 echo -ne '\e[5 q' # Use beam shape cursor on startup.
 preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
-#Load zsh-syntax-highlighting; should be last.
+# Plugins
+
+# Load zsh-autosuggestions
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh 2>/dev/null
+
+# Load zsh-syntax-highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
 
 if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
-    exec startx
+    exec sway
 fi
