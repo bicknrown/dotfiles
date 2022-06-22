@@ -51,11 +51,7 @@ fi
 eval $(gnome-keyring-daemon --start)
 export SSH_AUTH_SOCK
 
-bash ~/.fehbg &
-picom -b -c --config ~/.config/picom/picom.conf &
-xrdb -merge ~/.Xresources &
-bash ~/.scripts/auto-screen-rotate.sh eDP-1 "Wacom Pen and multitouch sensor Finger" &
-udiskie -Nt &
-caffeine &
-exec i3
+
+# bash ~/.scripts/auto-screen-rotate.sh eDP-1 "Wacom Pen and multitouch sensor Finger" &
+exec sway
 

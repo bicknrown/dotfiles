@@ -6,3 +6,9 @@
         protocol = ssh
 [commit]
         gpgsign = true
+[diff]
+	tool = vimdiff3
+[difftool "vimdiff3"]
+	path = nvim
+[merge]
+	tool = vimdiff3

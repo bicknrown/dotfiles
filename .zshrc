@@ -4,25 +4,22 @@
 # alias stuff
 alias vim="nvim"
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias discord="discord-canary"
 
-# openvpn home connection
-function homevpn() {
-    if [[ "$1" == "" ]]; then
-        sudo systemctl start openvpn-client@home
-    else
-        sudo systemctl "$1" openvpn-client@home
-    fi
-}
-
-# sets default libvirt connection
-export LIBVIRT_DEFAULT_URI="qemu:///system"
+# wayland-e stuff
+export WLR_DRM_NO_MODIFIERS=1
+export _JAVA_AWT_WM_NONREPARENTING=1
+export XDG_SESSION_TYPE="wayland"
+export MOZ_ENABLE_WAYLAND=1
+export BEMENU_BACKEND="wayland"
+export KITTY_ENABLE_WAYLAND=1
 
 # sets default editor
 export VISUAL=nvim
 export EDITOR="$VISUAL"
 
-# the jvm does not like non-reparenting wms, poor sway :(
-export _JAVA_AWT_WM_NONREPARENTING=1
+# sets default libvirt connection
+export LIBVIRT_DEFAULT_URI="qemu:///system"
 
 # cedev
 export CEDEV=~/CEdev
@@ -36,6 +33,15 @@ export GPG_TTY=$(tty)
 
 # term setting
 export TERM=xterm-256color
+
+# openvpn home connection function
+function vpn() {
+    if [[ "$1" == "" ]]; then
+        sudo systemctl start openvpn-client@home
+    else
+        sudo systemctl "$1" openvpn-client@home
+    fi
+}
 
 # Enable colors and change prompt:
 autoload -U colors && colors
@@ -87,6 +93,14 @@ echo -ne '\e[5 q' # Use beam shape cursor on startup.
 preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
 # Plugins
+
+# fzf-completion
+source /home/nick/.config/nvim/plugged/fzf/shell/completion.zsh
+# these variables have to be set AFTER `fzf` is loaded
+export FZF_DEFAULT_COMMAND="find ."
+export FZF_COMPLETION_TRIGGER=''
+bindkey '^T' fzf-completion
+bindkey '^I' $fzf_default_completion
 
 # Load zsh-autosuggestions
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh 2>/dev/null
