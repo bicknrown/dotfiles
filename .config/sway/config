@@ -13,13 +13,35 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 
 client.background       #000000
 
+output "*" bg ~/pictures/bliss.jpg fill
+
+input type:touchpad tap enabled
+input type:touchpad dwt disabled
+
 # modifer key, in this case the 'super' key
 set $mod Mod4
 
-output "*" bg ~/Downloads/windowsxpbackground.jpg fill
-
 set $laptop eDP-1
-set $dockcheck bash ~/.config/sway/scripts/dockcheck.sh
+set $thunderboltdisplay 'Apple Computer Inc Thunderbolt C02HQ2ULF2GC'
+set $rightdell 'Dell Inc. DELL S2316M 93FRK5AQ0C1T'
+set $leftdell 'Dell Inc. DELL S2316M 93FRK5BR0J1T'
+
+# Define names for default workspaces for which we configure key bindings later on.
+# We use variables to avoid repeating the names in multiple places.
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+workspace $ws1 output $laptop $thunderboltdisplay
+workspace $ws2 output $rightdell
+workspace $ws3 output $leftdell
 
 # no more window border
 default_border none
@@ -33,25 +55,24 @@ smart_gaps on
 font pango:Liberation Mono 8
 
 # idle timeouts
-exec swayidle timeout 300 'swaymsg "output * dpms off"' \
+exec swayidle -w timeout 300 'swaymsg "output * dpms off"' \
         resume 'swaymsg "output * dpms on"' \
-    timeout 310 'swaylock -i ~/Pictures/xplock.png' \
+    timeout 310 'swaylock -f -i ~/pictures/xplock.png' \
         resume 'swaymsg "output * dpms on"' \
-    timeout 600 'systemctl suspend-then-hibernate' \
-        resume 'swaymsg "output * dpms on"' \
-    before-sleep 'swaylock -i ~/Pictures/xplock.png' \
-    after-resume 'swaymsg "output * dpms on"'
+    idlehint 600 \
+    before-sleep 'swaylock -f -i ~/pictures/xplock.png' \
+    after-resume 'swaymsg "output * dpms on"; /etc/acpi/laptop-lid.sh'
 
 # lock on keybind
-bindsym $mod+Escape exec swaylock -i ~/Pictures/xplock.png
+bindsym $mod+Escape exec swaylock -i ~/pictures/xplock.png
 
-bindsym XF86MonBrightnessUp exec xbacklight -inc 5
-bindsym XF86MonBrightnessDown exec xbacklight -dec 5
+bindsym XF86MonBrightnessUp exec brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 
 # change volume or toggle mute
-bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && pkill -SIGRTMIN+5 waybar
-bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && pkill -SIGRTMIN+5 waybar
-bindsym XF86AudioMute exec amixer -q -D pulse sset Master toggle && pkill -SIGRTMIN+5 waybar
+bindsym XF86AudioRaiseVolume exec amixer -q -D pipewire sset Master 5%+ && pkill -SIGRTMIN+5 waybar
+bindsym XF86AudioLowerVolume exec amixer -q -D pipewire sset Master 5%- && pkill -SIGRTMIN+5 waybar
+bindsym XF86AudioMute exec amixer -q -D pipewire sset Master toggle && pkill -SIGRTMIN+5 waybar
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -75,17 +96,18 @@ bindsym $mod+Ctrl+z exec discord-canary
 bindsym $mod+Ctrl+c exec swaymsg "layout tabbed" & discord-canary & element-desktop & element-desktop --profile cse & thunderbird
 
 # spotify
+for_window [title="Spotify"] move window to scratchpad
 bindsym $mod+Ctrl+x exec spotify
 
 # email
 bindsym $mod+Ctrl+e exec thunderbird 
 
 # screenshots
-bindsym --release shift+Print exec grim - | tee ~/Pictures/screenshots/screenshot_$(date +%Y_%m_%d__%H_%M_%S).png | wl-copy
-bindsym --release Print exec grim -g "$(slurp)" - | tee ~/Pictures/screenshots/screenshot_$(date +%Y_%m_%d__%H_%M_%S).png | wl-copy 
+bindsym --release shift+Print exec grim - | tee ~/pictures/screenshots/screenshot_$(date +%Y_%m_%d__%H_%M_%S).png | wl-copy
+bindsym --release Print exec grim -g "$(slurp)" - | tee ~/pictures/screenshots/screenshot_$(date +%Y_%m_%d__%H_%M_%S).png | wl-copy 
 
 # start bemenu (a program launcher)
-bindsym $mod+d exec bemenu-run
+bindsym $mod+d exec j4-dmenu-desktop --dmenu="(cat ; (stest -flx $(echo $PATH | tr : ' ') | sort -u)) | bemenu -i"
 
 # scratchpad movement
 bindsym $mod+Shift+minus exec swaymsg 'move scratchpad' && pkill -SIGRTMIN+9 waybar
@@ -140,19 +162,6 @@ bindsym $mod+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
-
-# Define names for default workspaces for which we configure key bindings later on.
-# We use variables to avoid repeating the names in multiple places.
-set $ws1 "1"
-set $ws2 "2"
-set $ws3 "3"
-set $ws4 "4"
-set $ws5 "5"
-set $ws6 "6"
-set $ws7 "7"
-set $ws8 "8"
-set $ws9 "9"
-set $ws10 "10"
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
@@ -217,7 +226,7 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-	swaybar_command waybar
+	swaybar_command logwaybar
 	tray_output *
     icon_theme Adwaita
 	position top
@@ -232,8 +241,10 @@ bar {
 	}
 }
 
-
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec dunst
 exec rot8
-exec udiskie -t
-exec_always $dockcheck
+exec udiskie -s -F --terminal=kitty
+exec spotify
+exec ~/.config/waybar/scripts/music.sh
+exec_always /etc/acpi/laptop-lid.sh

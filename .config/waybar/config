@@ -1,15 +1,16 @@
-[{
+{
     "layer": "bottom",
-    "output": "eDP-1",
+    "spacing": 5,
     "modules-left": ["sway/workspaces", "sway/window"],
-    "modules-center": ["sway/mode","custom/scratchpad-indicator"],
-    "modules-right": ["custom/spotify","pulseaudio", "custom/pacman", "custom/aur", "network#wifi", "network#dockEthernet","network#vpn", "cpu", "memory", "temperature", "disk", "backlight", "battery", "clock", "idle_inhibitor", "tray"],
+    "modules-center": ["sway/mode"],
+    "modules-right": ["custom/spotify","pulseaudio", "custom/separator", "custom/packageupdates", "custom/temperature", "cpu", "memory", "disk", "custom/separator", "idle_inhibitor", "custom/dnd", "network#vpn", "custom/separator", "bluetooth", "network#wifi", "network#dockEthernet", "custom/separator", "backlight", "upower", "custom/separator", "clock", "custom/separator", "tray"],
     "sway/workspaces": {
         "format": "{name}",
         "disable-scroll": true
     },
     "sway/window": {
-        "max-length": 80
+        "max-length": 80,
+        "icon": false
     },
     "custom/scratchpad-indicator": {
         "interval": "once",
@@ -21,19 +22,14 @@
         "on-click-right": "exec swaymsg 'move scratchpad' && pkill -SIGRTMIN+9 waybar"
     },
     "custom/spotify": {
-        "format": "{}",
+        "exec": "cat ~/.config/waybar/scripts/.spotifymetadata",
         "escape": true,
-        "return-type": "string",
-        "max-length": 40,
-        "interval": "once",
+        "format": "{}",
+        "return-type": "json",
+        "max-length": 60,
         "signal": 8,
-        "on-click": "playerctl play-pause",
-        "on-click-right": "",
-        "smooth-scrolling-threshold": 1, // This value was tested using a trackpad, it should be lowered if using a mouse.
-        "on-scroll-up" : "",
-        "on-scroll-down" : "",
-        "exec": "playerctl metadata -f '{{title}} - {{artist}} '",
-        "exec-if": "pgrep spotify"
+        "interval": "once",
+        "on-click": "playerctl play-pause"
     },
     "pulseaudio": {
         "format": "{volume}% {icon}",
@@ -53,25 +49,33 @@
         "on-click": "pavucontrol",
         "on-click-right": "amixer set Master toggle"
     },
-    "custom/pacman": {
-        "exec": "checkupdates | wc -l",
-        "interval": "once",
-        "format": " {} "
+    "custom/packageupdates": {
+        "exec": "~/.config/waybar/scripts/packageupdates.sh",
+        "return-type": "json",
+        "interval": "3600",
+        "on-click": "pkill -SIGRTMIN+7 waybar",
+        "signal": 7,
+        "format": "{}"
     },
-    "custom/aur": {
-        "exec": "yay -Qu | wc -l",
-        "interval": "once",
-        "format": " {} "
+    "bluetooth": {
+        //"controller": "controller1", // specify the alias of the controller if there are more than 1 on the system
+        "format": "",
+        "format-disabled": "", // an empty format will hide the module
+        "format-connected": " {num_connections} connected",
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
     },
     "network#wifi": {
-        "interface": "wlan0",
-        "on-click": "nmcli device connect wlan0",
-        "on-click-right": "nmcli device disconnect wlan0",
+        "interface": "wlp0s20f3",
+        "interval": 10,
+        "on-click": "nmcli device connect wlp0s20f3",
+        "on-click-right": "nmcli device disconnect wlp0s20f3",
         "on-click-middle": "kitty nmtui",
         "format": "{ifname}",
-        "format-wifi": "{essid} ({signalStrength}%) ",
-        "format-disconnected": "Disabled ", 
-        "tooltip-format-wifi": "{ipaddr} {essid} ({signalStrength}%) ",
+        "format-wifi": "",
+        "format-disconnected": "", 
+        "tooltip-format-wifi": "{ipaddr} {essid} ({signalStrength}%) \nDefault gateway: {gwaddr}\nSubnet mask: {netmask}\nBandwidth: {bandwidthDownBits} / {bandwidthUpBits}",
         "tooltip-format-disconnected": "Disconnected",
         "max-length": 50
     },
@@ -80,10 +84,10 @@
         "on-click": "nmcli device connect enp11s0",
         "on-click-right": "nmcli device disconnect enp11s0",
         "on-click-middle": "kitty nmtui",
-        "format": "Disabled ",
-        "format-ethernet": "{ipaddr}/{cidr} ",
+        "format": "",
+        "format-ethernet": "",
         "format-disconnected": "",
-        "tooltip-format-ethernet": "{ipaddr} {ifname} ",
+        "tooltip-format-ethernet": "{ipaddr}/{cidr} {ifname} ",
         "tooltip-format-disconnected": "Disconnected",
         "max-length": 50
     },
@@ -93,45 +97,42 @@
         "on-click-right": "sudo systemctl stop openvpn-client@home",
         "on-click-middle": "kitty nmtui",
         "format": "{ifname}",
-        "format-ethernet": "{ipaddr}/{cidr} {essid} ",
+        "format-ethernet": "",
         "format-disconnected": "", //An empty format will hide the module.
-        "tooltip-format-ethernet": "{ipaddr} {ifname} ",
+        "tooltip-format-ethernet": "{ipaddr}/{cidr} {ifname} ",
         "tooltip-format-disconnected": "Disconnected",
         "max-length": 50
     },
-    "disk": {
-        "interval": 30,
-        "format": "{free}/{total}",
-        "path": "/"
+    "custom/temperature": {
+        "exec": "~/.config/waybar/scripts/temperature.sh",
+        "return-type": "json",
+        "interval": 10,
+        "format": "{}°C "
     },
     "cpu": {
         "interval": 10,
-        "format": "{}% ",
+        "format": "{usage}% ",
         "max-length": 10
     },
     "memory": {
         "interval": 30,
         "format": "{used:0.1f}G/{total:0.1f}G "
     },
-    "temperature": {
-        "thermal-zone": 5,
-        //"hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "critical-threshold": 96,
-        "format-critical": "{temperatureC}°C ",
-        "format": "{temperatureC}°C "
+    "disk": {
+        "interval": 30,
+        "format": "{free}/{total}",
+        "path": "/"
     },
     "backlight": {
         "device": "intel_backlight",
         "format": "{percent}% {icon}",
         "format-icons": ["", ""]
     },
-    "battery": {
-        "format": "{capacity}% {icon} {time}",
-        "format-icons": ["", "", "", "", ""]
-    },
-    "clock": {
-        "interval": 1,
-        "format": "{:%a, %d. %b  %H:%M:%S}"
+    "upower": {
+        "icon-size": 20,
+        "hide-if-empty": true,
+        "tooltip": true,
+        "tooltip-spacing": 20
     },
     "idle_inhibitor": {
         "format": "{icon}",
@@ -140,162 +141,25 @@
             "deactivated": ""
         }
     },
-    "tray": {
-        "icon-size": 16,
-        "spacing": 10
-    }
-},
-{
-    "layer": "bottom",
-    "output": "Apple Computer Inc Thunderbolt C02HQ2ULF2GC",
-    "modules-left": ["sway/workspaces", "sway/window"],
-    "modules-center": ["sway/mode","custom/scratchpad-indicator"],
-    "modules-right": ["custom/spotify","pulseaudio", "custom/pacman", "custom/aur", "network#dockEthernet","network#vpn", "cpu", "memory", "temperature", "disk", "clock", "tray"],
-    "sway/workspaces": {
-        "format": "{name}",
-        "disable-scroll": true
-    },
-    "sway/window": {
-        "max-length": 80
-    },
-    "custom/scratchpad-indicator": {
+    "custom/dnd": {
+        "exec": "~/.config/waybar/scripts/dunst.sh",
         "interval": "once",
+        "on-click": "dunstctl set-paused toggle && pkill -SIGRTMIN+6 waybar",
+        "signal": 6,
         "return-type": "json",
-        "exec": "swaymsg -t get_tree | jq --unbuffered --compact-output '(recurse(.nodes[]) | select(.name == \"__i3_scratch\") | .focus) as $scratch_ids | [..  | (.nodes? + .floating_nodes?) // empty | .[] | select(.id |IN($scratch_ids[]))] as $scratch_nodes | if ($scratch_nodes|length) > 0 then { text: \"\\($scratch_nodes | length)\", tooltip: $scratch_nodes | map(\"\\(.app_id // .window_properties.class) (\\(.id)): \\(.name)\") | join(\"\\n\") } else empty end'",
-        "format": "{} 🗗",
-        "signal": 9,
-        "on-click": "exec swaymsg 'scratchpad show' && pkill -SIGRTMIN+9 waybar",
-        "on-click-right": "exec swaymsg 'move scratchpad' && pkill -SIGRTMIN+9 waybar"
-    },
-    "custom/spotify": {
-        "format": "{}",
-        "escape": true,
-        "return-type": "string",
-        "max-length": 40,
-        "interval": "once",
-        "signal": 8,
-        "on-click": "playerctl play-pause",
-        "on-click-right": "",
-        "smooth-scrolling-threshold": 1, // This value was tested using a trackpad, it should be lowered if using a mouse.
-        "on-scroll-up" : "",
-        "on-scroll-down" : "",
-        "exec": "playerctl metadata -f '{{title}} - {{artist}} '",
-        "exec-if": "pgrep spotify"
-    },
-    "pulseaudio": {
-        "format": "{volume}% {icon}",
-        "format-bluetooth": "{volume}% {icon}",
-        "format-muted": "",
-        "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["", ""]
-        },
-        "signal": 5,
-        "scroll-step": 1,
-        "on-click": "pavucontrol",
-        "on-click-right": "amixer set Master toggle"
-    },
-    "custom/pacman": {
-        "exec": "checkupdates | wc -l",
-        "interval": "once",
-        "format": " {} "
-    },
-    "custom/aur": {
-        "exec": "yay -Qu | wc -l",
-        "interval": "once",
-        "format": " {} "
-    },
-    "network#dockEthernet": {
-        "interface": "enp11s0",
-        "on-click": "nmcli device connect enp11s0",
-        "on-click-right": "nmcli device disconnect enp11s0",
-        "on-click-middle": "kitty nmtui",
-        "format": "Disabled ",
-        "format-ethernet": "{ipaddr}/{cidr} ",
-        "format-disconnected": "",
-        "tooltip-format-ethernet": "{ipaddr} {ifname} ",
-        "tooltip-format-disconnected": "Disconnected",
-        "max-length": 50
-    },
-    "network#vpn": {
-        "interface": "tun0",
-        "on-click": "sudo systemctl start openvpn-client@home",
-        "on-click-right": "sudo systemctl stop openvpn-client@home",
-        "on-click-middle": "kitty nmtui",
-        "format": "{ifname}",
-        "format-ethernet": "{ipaddr}/{cidr} {essid} ",
-        "format-disconnected": "", //An empty format will hide the module.
-        "tooltip-format-ethernet": "{ipaddr} {ifname} ",
-        "tooltip-format-disconnected": "Disconnected",
-        "max-length": 50
-    },
-    "disk": {
-        "interval": 30,
-        "format": "{free}/{total}",
-        "path": "/"
-    },
-    "cpu": {
-        "interval": 10,
-        "format": "{}% ",
-        "max-length": 10
-    },
-    "memory": {
-        "interval": 30,
-        "format": "{used:0.1f}G/{total:0.1f}G "
-    },
-    "temperature": {
-        "thermal-zone": 5,
-        //"hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-        "critical-threshold": 96,
-        "format-critical": "{temperatureC}°C ",
-        "format": "{temperatureC}°C "
+        "format": "",
     },
     "clock": {
         "interval": 1,
-        "format": "{:%a, %d. %b  %H:%M:%S}"
-    },
-    "idle_inhibitor": {
-        "format": "{icon}",
-        "format-icons": {
-            "activated": "",
-            "deactivated": ""
-        }
+        "format": "{:%a %D %H:%M:%S}"
     },
     "tray": {
         "icon-size": 16,
         "spacing": 10
-    }
-},
-{
-    "layer": "bottom",
-    "output": ["!Apple Computer Inc Thunderbolt C02HQ2ULF2GC", "!eDP-1", "Dell Inc. DELL S2316M 93FRK5AQ0C1T", "Dell Inc. DELL S2316M 93FRK5BR0J1T"],
-    "modules-left": ["sway/workspaces", "sway/window"],
-    "modules-center": ["sway/mode","custom/scratchpad-indicator"],
-    "modules-right": ["clock"],
-    "sway/workspaces": {
-        "format": "{name}",
-        "disable-scroll": true
     },
-    "sway/window": {
-        "max-length": 80
-    },
-    "custom/scratchpad-indicator": {
+    "custom/separator": {
+        "format": "|",
         "interval": "once",
-        "return-type": "json",
-        "exec": "swaymsg -t get_tree | jq --unbuffered --compact-output '(recurse(.nodes[]) | select(.name == \"__i3_scratch\") | .focus) as $scratch_ids | [..  | (.nodes? + .floating_nodes?) // empty | .[] | select(.id |IN($scratch_ids[]))] as $scratch_nodes | if ($scratch_nodes|length) > 0 then { text: \"\\($scratch_nodes | length)\", tooltip: $scratch_nodes | map(\"\\(.app_id // .window_properties.class) (\\(.id)): \\(.name)\") | join(\"\\n\") } else empty end'",
-        "format": "{} 🗗",
-        "signal": 9,
-        "on-click": "exec swaymsg 'scratchpad show' && pkill -SIGRTMIN+9 waybar",
-        "on-click-right": "exec swaymsg 'move scratchpad' && pkill -SIGRTMIN+9 waybar"
-    },
-    "clock": {
-        "interval": 1,
-        "format": "{:%a, %d. %b  %H:%M:%S}"
+        "tooltip": false
     }
 }
-]

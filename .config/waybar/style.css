@@ -2,9 +2,15 @@
     /* `otf-font-awesome` is required to be installed for icons */
     font-family: FontAwesome, Roboto, Helvetica, Arial, sans-serif;
     font-size: 12px;
-    color: #2eeeff;
-
+    /*background: rgba(43, 48, 59, 0);*/
+    /* color: #2eeeff; */
+    color: #9d9ef2;
     font-weight: bold;
+}
+
+#custom-separator {
+  color: #92b6d3;
+  margin: 0 5px;
 }
 
 window#waybar {
@@ -49,41 +55,8 @@ window#waybar.hidden {
     border-bottom: 3px solid #ffffff;
 }
 
-#clock,
-#battery,
-#cpu,
-#memory,
-#disk,
-#temperature,
-#backlight,
-#network,
-#pulseaudio,
-#custom-media,
-#tray,
-#mode,
-#idle_inhibitor,
-#mpd {
-    padding: 0 4px;
-}
-
-#memory {
-    color: #b849ff;
-}
-
-#disk {
-    color: #b849ff;
-}
-
-#network {
-    color: #b849ff;
-}
-
-#network.vpn {
-    color: #ffffff;
-}
-
 #window {
-    color: #b849ff;
+    color: #f09df2;
 }
 
 #workspaces {
@@ -99,14 +72,6 @@ window#waybar.hidden {
 .modules-right > widget:last-child > #workspaces {
     margin-right: 0;
 }
-
-#clock {
-    color: #b849ff;
-}
-
-#battery {
-}
-
 #battery.charging, #battery.plugged {
     background-color: rgba(38, 166, 91, 0.8);
 }
@@ -132,14 +97,9 @@ label:focus {
     background-color: #000000;
 }
 
-#network.disconnected {
-    background-color: #f53c3c;
-}
-
 
 #pulseaudio.muted {
-    background-color: #90b1b1;
-    color: #2a5c45;
+    color: #92b6d3;
 }
 
 #custom-media {
@@ -170,6 +130,11 @@ label:focus {
 }
 
 #idle_inhibitor.activated {
+    background-color: #ecf0f1;
+    color: #2d3436;
+}
+
+#custom-dnd.true {
     background-color: #ecf0f1;
     color: #2d3436;
 }
